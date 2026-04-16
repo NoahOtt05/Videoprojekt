@@ -1,0 +1,102 @@
+import java.util.Scanner;
+ 
+public class TicTacToe {
+ 
+    static char[] board = {'1','2','3','4','5','6','7','8','9'};
+    static char currentPlayer = 'X';
+ 
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int moves = 0;
+        boolean gameRunning = true;
+ 
+        System.out.println("=== Willkommen bei Tic Tac Toe ===");
+        System.out.println("Spieler 1 = X  |  Spieler 2 = O");
+        System.out.println("Wähle ein Feld (1-9) um zu spielen.\n");
+ 
+        while (gameRunning) {
+            printBoard();
+ 
+            System.out.print("Spieler " + currentPlayer + ", wähle ein Feld (1-9): ");
+            String input = scanner.nextLine().trim();
+ 
+            // Eingabe validieren
+            if (!input.matches("[1-9]")) {
+                System.out.println("⚠ Ungültige Eingabe! Bitte eine Zahl zwischen 1 und 9 eingeben.\n");
+                continue;
+            }
+ 
+            int field = Integer.parseInt(input) - 1;
+ 
+            // Prüfen ob Feld bereits belegt
+            if (board[field] == 'X' || board[field] == 'O') {
+                System.out.println("⚠ Dieses Feld ist bereits belegt! Wähle ein anderes.\n");
+                continue;
+            }
+ 
+            // Zug setzen
+            board[field] = currentPlayer;
+            moves++;
+ 
+            // Gewinner prüfen
+            if (checkWinner()) {
+                printBoard();
+                System.out.println("🎉 Spieler " + currentPlayer + " hat gewonnen! Glückwunsch!");
+                gameRunning = false;
+            } else if (moves == 9) {
+                printBoard();
+                System.out.println("🤝 Unentschieden! Kein Gewinner.");
+                gameRunning = false;
+            } else {
+                // Spieler wechseln
+                currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+            }
+        }
+ 
+        // Nochmal spielen?
+        System.out.print("\nNochmal spielen? (j/n): ");
+        String again = scanner.nextLine().trim().toLowerCase();
+        if (again.equals("j")) {
+            board = new char[]{'1','2','3','4','5','6','7','8','9'};
+            currentPlayer = 'X';
+            main(args);
+        } else {
+            System.out.println("Danke fürs Spielen! Auf Wiedersehen 👋");
+        }
+ 
+        scanner.close();
+    }
+ 
+    static void printBoard() {
+        System.out.println();
+        System.out.println(" " + board[0] + " | " + board[1] + " | " + board[2]);
+        System.out.println("---+---+---");
+        System.out.println(" " + board[3] + " | " + board[4] + " | " + board[5]);
+        System.out.println("---+---+---");
+        System.out.println(" " + board[6] + " | " + board[7] + " | " + board[8]);
+        System.out.println();
+    }
+ 
+    static boolean checkWinner() {
+        // Alle möglichen Gewinnkombinationen
+        int[][] winCombinations = {
+            {0, 1, 2}, // Zeile 1
+            {3, 4, 5}, // Zeile 2
+            {6, 7, 8}, // Zeile 3
+            {0, 3, 6}, // Spalte 1
+            {1, 4, 7}, // Spalte 2
+            {2, 5, 8}, // Spalte 3
+            {0, 4, 8}, // Diagonale
+            {2, 4, 6}  // Diagonale
+        };
+ 
+        for (int[] combo : winCombinations) {
+            if (board[combo[0]] == currentPlayer &&
+                board[combo[1]] == currentPlayer &&
+                board[combo[2]] == currentPlayer) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
